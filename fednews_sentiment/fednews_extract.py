@@ -45,7 +45,8 @@ st.title("📊 Federal News Comments Sentiment Tracker")
 
 # Slider for the number of posts to analyze
 num_posts = st.slider("Number of hottest posts to analyze", 1, 10, 5)
-num_comments = st.slider("Max comments per post", 1, 20, 10)
+#num_comments = st.slider("Max comments per post", 1, 20, 10)
+num_comments = 15
 
 # Fetch & analyze posts
 df = fetch_fednews_comments(num_posts, num_comments)

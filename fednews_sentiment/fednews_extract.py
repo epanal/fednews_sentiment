@@ -55,7 +55,7 @@ def fetch_fednews_comments(sort_by="hot", limit=5, comment_limit=10):
 st.title("📊 r/fednews Post Sentiment")
 
 # Dropdown for sorting method
-sort_option = st.selectbox("Sort posts by", ["hot", "new", "top", "best"], index=0)
+sort_option = st.selectbox("Sort posts by", ["hot", "new", "top"], index=0)
 
 # Slider for the number of posts to analyze
 #num_posts = st.slider("Number of posts to analyze", 1, 10, 5)

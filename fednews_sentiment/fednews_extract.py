@@ -15,9 +15,22 @@ reddit = praw.Reddit(
 analyzer = SentimentIntensityAnalyzer()
 
 # Function to fetch posts and analyze comments' sentiment
-def fetch_fednews_comments(limit=5, comment_limit=10):
+def fetch_fednews_comments(sort_by="hot", limit=5, comment_limit=10):
     posts = []
-    for post in reddit.subreddit("fednews").hot(limit=limit):  # Fetch hottest posts
+    
+    # Select sorting method based on user choice
+    if sort_by == "hot":
+        subreddit_posts = reddit.subreddit("fednews").hot(limit=limit)
+    elif sort_by == "new":
+        subreddit_posts = reddit.subreddit("fednews").new(limit=limit)
+    elif sort_by == "top":
+        subreddit_posts = reddit.subreddit("fednews").top(limit=limit)
+    elif sort_by == "best":
+        subreddit_posts = reddit.subreddit("fednews").best(limit=limit)
+    else:
+        subreddit_posts = reddit.subreddit("fednews").hot(limit=limit)  # Default fallback
+    
+    for post in subreddit_posts:
         post.comment_sort = "top"  # Get top comments
         post.comments.replace_more(limit=0)  # Remove "More comments" links
         
@@ -41,16 +54,19 @@ def fetch_fednews_comments(limit=5, comment_limit=10):
     return pd.DataFrame(posts)
 
 # Streamlit UI
-st.title("📊 r/fednews Hot Posts Sentiment")
+st.title("📊 r/fednews Post Sentiment")
+
+# Dropdown for sorting method
+sort_option = st.selectbox("Sort posts by", ["hot", "new", "top", "best"], index=0)
 
 # Slider for the number of posts to analyze
-num_posts = st.slider("Number of hottest posts to analyze", 1, 10, 5)
-#num_comments = st.slider("Max comments per post", 1, 20, 10)
-num_comments = 15
+#num_posts = st.slider("Number of posts to analyze", 1, 10, 5)
+num_posts = 10
+num_comments = 15  # Fixed value
 
 # Fetch & analyze posts
-df = fetch_fednews_comments(num_posts, num_comments)
-st.write(df.to_markdown(index=False), unsafe_allow_html=True)  # <== Display table here
+df = fetch_fednews_comments(sort_by=sort_option, limit=num_posts, comment_limit=num_comments)
+st.write(df.to_markdown(index=False), unsafe_allow_html=True)  # Display table with clickable links
 
 # Sentiment Count Plot
 sentiment_counts = df["sentiment"].value_counts()
@@ -68,5 +84,4 @@ fig = px.pie(
 )
 
 # Display results
-#st.dataframe(df)
 st.plotly_chart(fig)

@@ -14,47 +14,48 @@ reddit = praw.Reddit(
 # Initialize Sentiment Analyzer
 analyzer = SentimentIntensityAnalyzer()
 
-# Function to fetch latest posts with sentiment analysis
-def fetch_fednews_posts(limit=10):
+# Function to fetch posts and analyze comments' sentiment
+def fetch_fednews_comments(limit=5, comment_limit=10):
     posts = []
-    for post in reddit.subreddit("fednews").hot(limit=limit):
-        sentiment_score = analyzer.polarity_scores(post.title)["compound"]
+    for post in reddit.subreddit("fednews").hot(limit=limit):  # Fetch hottest posts
+        post.comment_sort = "top"  # Get top comments
+        post.comments.replace_more(limit=0)  # Remove "More comments" links
+        
+        comment_sentiments = []
+        for comment in post.comments.list()[:comment_limit]:  # Limit number of comments per post
+            score = analyzer.polarity_scores(comment.body)["compound"]
+            comment_sentiments.append(score)
+        
+        # Aggregate sentiment scores (e.g., average)
+        avg_sentiment = sum(comment_sentiments) / len(comment_sentiments) if comment_sentiments else 0
         sentiment_label = (
-            "Positive" if sentiment_score > 0.05 else "Negative" if sentiment_score < -0.05 else "Neutral"
+            "Positive" if avg_sentiment > 0.05 else "Negative" if avg_sentiment < -0.05 else "Neutral"
         )
-        post_url = f"https://www.reddit.com{post.permalink}"
+        
         posts.append({
-            "Title": post.title, 
-            "Sentiment": sentiment_label, 
-            "Score": sentiment_score, 
-            "Reddit Link": post_url
+            "title": post.title,
+            "link": f"https://www.reddit.com{post.permalink}",
+            "sentiment": sentiment_label,
+            "avg_sentiment_score": avg_sentiment,
+            "num_comments_analyzed": len(comment_sentiments),
         })
+    
     return pd.DataFrame(posts)
 
 # Streamlit UI
-st.title("📊 Federal News Sentiment Tracker")
+st.title("📊 Federal News Comments Sentiment Tracker")
 
-# User input for number of posts
-num_posts = st.slider("Select number of posts to fetch:", min_value=5, max_value=20, value=10)
+# Slider for the number of posts to analyze
+num_posts = st.slider("Number of hottest posts to analyze", 1, 10, 5)
+num_comments = st.slider("Max comments per post", 1, 20, 10)
 
 # Fetch & analyze posts
-df = fetch_fednews_posts(num_posts)
+df = fetch_fednews_comments(num_posts, num_comments)
 
 # Sentiment Count Plot
-sentiment_counts = df["Sentiment"].value_counts()
-fig = px.pie(
-    names=sentiment_counts.index, 
-    values=sentiment_counts.values, 
-    title="Sentiment Breakdown",
-    color=sentiment_counts.index,
-    color_discrete_map={"Positive": "green", "Neutral": "gray", "Negative": "red"}
-)
+sentiment_counts = df["sentiment"].value_counts()
+fig = px.pie(names=sentiment_counts.index, values=sentiment_counts.values, title="Sentiment Breakdown")
 
-# Display DataFrame with Clickable Links
-st.subheader("🔗 Ethan's Sentiment tracker for latest r/fednews")
-df_display = df.copy()
-df_display["Reddit Link"] = df_display["Reddit Link"].apply(lambda x: f"[🔗 Link]({x})")
-st.write(df_display.to_markdown(index=False), unsafe_allow_html=True)
-
-# Show Sentiment Pie Chart
+# Display results
+st.dataframe(df)
 st.plotly_chart(fig)

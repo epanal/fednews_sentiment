@@ -4,3 +4,4 @@ pandas
 plotly
 vaderSentiment
 python-dotenv
+tabulate

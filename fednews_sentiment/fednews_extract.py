@@ -67,5 +67,5 @@ fig = px.pie(
 )
 
 # Display results
-st.dataframe(df)
+#st.dataframe(df)
 st.plotly_chart(fig)

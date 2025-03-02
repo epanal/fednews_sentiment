@@ -57,14 +57,25 @@ st.title("📊 r/fednews Post Sentiment")
 # Dropdown for sorting method
 sort_option = st.selectbox("Sort posts by", ["hot", "new", "top"], index=0)
 
-# Slider for the number of posts to analyze
+# Sentiment filter selection
+sentiment_filter = st.radio("Filter posts by sentiment", ["All", "Positive", "Negative"])
+
+# Number of posts to analyze (fixed)
 #num_posts = st.slider("Number of posts to analyze", 1, 10, 5)
-num_posts = 10
-num_comments = 15  # Fixed value
+num_posts = 15
+num_comments = 15
 
 # Fetch & analyze posts
 df = fetch_fednews_comments(sort_by=sort_option, limit=num_posts, comment_limit=num_comments)
-st.write(df.to_markdown(index=False), unsafe_allow_html=True)  # Display table with clickable links
+
+# Apply sentiment filter
+if sentiment_filter == "Positive":
+    df = df[df["sentiment"] == "Positive"]
+elif sentiment_filter == "Negative":
+    df = df[df["sentiment"] == "Negative"]
+
+# Display filtered results
+st.write(df.to_markdown(index=False), unsafe_allow_html=True)
 
 # Sentiment Count Plot
 sentiment_counts = df["sentiment"].value_counts()

@@ -6,9 +6,9 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # Read credentials from Streamlit secrets
 reddit = praw.Reddit(
-    client_id=st.secrets["reddit"]["client_id"],
-    client_secret=st.secrets["reddit"]["client_secret"],
-    user_agent=st.secrets["reddit"]["user_agent"]
+    client_id=st.secrets["client_id"],
+    client_secret=st.secrets["client_secret"],
+    user_agent=st.secrets["user_agent"]
 )
 
 # Initialize Sentiment Analyzer

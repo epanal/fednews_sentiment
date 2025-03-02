@@ -49,6 +49,7 @@ num_comments = st.slider("Max comments per post", 1, 20, 10)
 
 # Fetch & analyze posts
 df = fetch_fednews_comments(num_posts, num_comments)
+st.write(df.to_markdown(index=False), unsafe_allow_html=True)  # <== Display table here
 
 # Sentiment Count Plot
 sentiment_counts = df["sentiment"].value_counts()

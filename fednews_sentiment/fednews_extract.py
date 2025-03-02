@@ -34,10 +34,9 @@ def fetch_fednews_comments(limit=5, comment_limit=10):
         
         posts.append({
             "title": post.title,
-            "link": f"https://www.reddit.com{post.permalink}",
+            "link": f"[Reddit Post](https://www.reddit.com{post.permalink})",  # Shortened clickable link
             "sentiment": sentiment_label,
             "avg_sentiment_score": avg_sentiment,
-            "num_comments_analyzed": len(comment_sentiments),
         })
     
     return pd.DataFrame(posts)
@@ -54,7 +53,18 @@ df = fetch_fednews_comments(num_posts, num_comments)
 
 # Sentiment Count Plot
 sentiment_counts = df["sentiment"].value_counts()
-fig = px.pie(names=sentiment_counts.index, values=sentiment_counts.values, title="Sentiment Breakdown")
+
+# Define custom colors
+color_map = {"Positive": "green", "Neutral": "gray", "Negative": "red"}
+
+# Create pie chart with custom colors
+fig = px.pie(
+    names=sentiment_counts.index, 
+    values=sentiment_counts.values, 
+    title="Sentiment Breakdown",
+    color=sentiment_counts.index,  # Assign colors based on sentiment
+    color_discrete_map=color_map   # Apply custom color mapping
+)
 
 # Display results
 st.dataframe(df)

@@ -44,7 +44,7 @@ def fetch_fednews_comments(sort_by="hot", limit=5, comment_limit=10):
         )
         
         posts.append({
-            "title": f"`[{post.title}](https://www.reddit.com{post.permalink})`",
+            "title": f"[{post.title.replace('|', '&#124;')}](https://www.reddit.com{post.permalink})",
             "sentiment": sentiment_label,
             "comment_score": avg_sentiment,
         })

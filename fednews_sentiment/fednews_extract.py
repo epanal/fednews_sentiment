@@ -4,11 +4,11 @@ import plotly.express as px
 import streamlit as st
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Reddit API Setup
+# Read credentials from Streamlit secrets
 reddit = praw.Reddit(
-    client_id="REDDIT_CLIENT_ID",
-    client_secret="REDDIT_CLIENT_SECRET",
-    user_agent="REDDIT_USER_AGENT",
+    client_id=st.secrets["reddit"]["client_id"],
+    client_secret=st.secrets["reddit"]["client_secret"],
+    user_agent=st.secrets["reddit"]["user_agent"]
 )
 
 # Initialize Sentiment Analyzer

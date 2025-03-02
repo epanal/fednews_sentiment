@@ -33,10 +33,9 @@ def fetch_fednews_comments(limit=5, comment_limit=10):
         )
         
         posts.append({
-            "title": post.title,
-            "link": f"[Reddit Post](https://www.reddit.com{post.permalink})",  # Shortened clickable link
+            "title": f"[{post.title}](https://www.reddit.com{post.permalink})",  # Clickable title
             "sentiment": sentiment_label,
-            "avg_sentiment_score": avg_sentiment,
+            "avg_comment_sentiment_score": avg_sentiment,
         })
     
     return pd.DataFrame(posts)

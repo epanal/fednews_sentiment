@@ -4,4 +4,8 @@ pandas
 plotly
 vaderSentiment
 python-dotenv
+<<<<<<< HEAD
 tabulate
+=======
+tabulate
+>>>>>>> 1b7a7a6177d0ac8e13e2ac13de542cffbafbc7b7

@@ -25,8 +25,6 @@ def fetch_fednews_comments(sort_by="hot", limit=5, comment_limit=10):
         subreddit_posts = reddit.subreddit("fednews").new(limit=limit)
     elif sort_by == "top":
         subreddit_posts = reddit.subreddit("fednews").top(limit=limit)
-    elif sort_by == "best":
-        subreddit_posts = reddit.subreddit("fednews").best(limit=limit)
     else:
         subreddit_posts = reddit.subreddit("fednews").hot(limit=limit)  # Default fallback
     

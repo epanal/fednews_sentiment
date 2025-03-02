@@ -41,7 +41,7 @@ def fetch_fednews_comments(limit=5, comment_limit=10):
     return pd.DataFrame(posts)
 
 # Streamlit UI
-st.title("📊 Federal News Comments Sentiment Tracker")
+st.title("📊 r/fednews Hot Posts Sentiment")
 
 # Slider for the number of posts to analyze
 num_posts = st.slider("Number of hottest posts to analyze", 1, 10, 5)
